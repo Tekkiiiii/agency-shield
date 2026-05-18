@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGovernance } from "@/lib/governance/store";
 import {
@@ -41,9 +42,63 @@ function StatCard({ label, value, subtext, icon, accent, pulse }: StatCardProps)
   );
 }
 
+function useDeltaLast60s(events: { timestamp: string; type: string }[], type: string): number {
+  const [delta, setDelta] = useState(0);
+
+  useEffect(() => {
+    function count() {
+      const cutoff = Date.now() - 60_000;
+      return events.filter(
+        (e) => e.type === type && new Date(e.timestamp).getTime() >= cutoff
+      ).length;
+    }
+    setDelta(count());
+    const interval = setInterval(() => setDelta(count()), 5000);
+    return () => clearInterval(interval);
+  }, [events, type]);
+
+  return delta;
+}
+
 export function StatsRow() {
   const { state } = useGovernance();
   const { stats } = state;
+
+  const threatDelta = useDeltaLast60s(
+    state.events.filter((e) => ["injection_detected", "tool_blocked", "quarantine", "escalation"].includes(e.type)),
+    state.events.find((e) => ["injection_detected", "tool_blocked", "quarantine", "escalation"].includes(e.type))?.type ?? "injection_detected"
+  );
+
+  // Count ALL threat-type events in last 60s
+  const [threatsLast60, setThreatsLast60] = useState(0);
+  const [injectionsLast60, setInjectionsLast60] = useState(0);
+
+  useEffect(() => {
+    function countThreats() {
+      const cutoff = Date.now() - 60_000;
+      return state.events.filter(
+        (e) =>
+          ["injection_detected", "tool_blocked", "quarantine", "escalation"].includes(e.type) &&
+          new Date(e.timestamp).getTime() >= cutoff
+      ).length;
+    }
+    function countInjections() {
+      const cutoff = Date.now() - 60_000;
+      return state.events.filter(
+        (e) => e.type === "injection_detected" && new Date(e.timestamp).getTime() >= cutoff
+      ).length;
+    }
+    setThreatsLast60(countThreats());
+    setInjectionsLast60(countInjections());
+    const iv = setInterval(() => {
+      setThreatsLast60(countThreats());
+      setInjectionsLast60(countInjections());
+    }, 5000);
+    return () => clearInterval(iv);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.events]);
+
+  void threatDelta;
 
   const complianceColor =
     stats.complianceScore >= 90
@@ -64,7 +119,7 @@ export function StatsRow() {
       <StatCard
         label="Active Threats"
         value={stats.threatsBlocked}
-        subtext="last 24h"
+        subtext={threatsLast60 > 0 ? `+${threatsLast60} last 60s` : "last 24h"}
         icon={<AlertOctagon className="h-6 w-6" />}
         accent="text-red-400"
         pulse={stats.threatsBlocked > 0}
@@ -72,7 +127,7 @@ export function StatsRow() {
       <StatCard
         label="Injections Caught"
         value={stats.injectionsCaught}
-        subtext="by Lobster Trap DPI"
+        subtext={injectionsLast60 > 0 ? `+${injectionsLast60} last 60s` : "by Lobster Trap DPI"}
         icon={<Zap className="h-6 w-6" />}
         accent="text-orange-400"
         pulse={stats.injectionsCaught > 0}

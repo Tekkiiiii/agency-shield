@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGovernance } from "@/lib/governance/store";
 import { ResultBadge } from "./SeverityBadge";
-import { ClipboardList, Filter } from "lucide-react";
+import { ClipboardList, Filter, Download } from "lucide-react";
 import type { AuditEntry } from "@/lib/governance/types";
 
 function formatTs(iso: string): string {
@@ -18,6 +18,33 @@ function formatTs(iso: string): string {
 }
 
 type ResultFilter = "all" | AuditEntry["result"];
+
+function exportCsv(entries: AuditEntry[], filter: ResultFilter) {
+  const rows = entries.filter((e) => filter === "all" || e.result === filter);
+  const header = ["timestamp", "actor", "action", "target", "result", "evidence", "policy_ref"];
+  const csvContent = [
+    header.join(","),
+    ...rows.map((e) =>
+      [
+        e.timestamp,
+        `"${e.actor}"`,
+        `"${e.action}"`,
+        `"${e.target}"`,
+        e.result,
+        `"${(e.evidence ?? "").replace(/"/g, '""')}"`,
+        e.policyRef ?? "",
+      ].join(",")
+    ),
+  ].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `agency-shield-audit-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export function AuditTrail() {
   const { state } = useGovernance();
@@ -43,6 +70,14 @@ export function AuditTrail() {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => exportCsv(entries, filter)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+              title="Export CSV"
+            >
+              <Download className="h-3 w-3" />
+              Export CSV
+            </button>
             <Filter className="h-3.5 w-3.5 text-slate-500" />
             {(["all", "allowed", "denied", "escalated"] as ResultFilter[]).map((f) => (
               <button

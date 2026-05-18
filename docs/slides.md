@@ -195,6 +195,8 @@ These attacks happen at the **orchestration layer** — above the LLM, below the
 
 Real-time governance visibility across 30 agents in 10 departments.
 
+![Dashboard](screenshot.png)
+
 | Panel | What It Shows |
 |-------|--------------|
 | **Stats Row** | Active threats, injections caught, tools blocked, cost saved, compliance % |
@@ -254,7 +256,7 @@ Both **Agency Shield** events (orchestration-layer) and **Lobster Trap DPI** eve
 
 **Operational visibility** — 30 agents across 10 departments, visible in one dashboard. Security and compliance teams see the same data in real time.
 
-> **The enterprise AI market is racing toward multi-agent deployments.**
+> **$847 saved in 10-minute demo — annualized to $44M for enterprise.**
 > Governance infrastructure is the prerequisite, not the afterthought.
 
 ---
@@ -281,7 +283,7 @@ The governance engine code in `governance-engine/` is adapted from a production 
 **Defense in depth for multi-agent AI.**
 From the LLM call to the orchestration layer.
 
-**Demo**: agency-shield-demo.vercel.app
+## `https://dashboard-iota-swart-15.vercel.app`
 
 **GitHub**: github.com/Tekkiiiii/agency-shield
 
