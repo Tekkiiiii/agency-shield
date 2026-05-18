@@ -147,9 +147,9 @@ export function StatsRow() {
         accent="text-yellow-400"
       />
       <StatCard
-        label="Cost Saved"
+        label="Overruns Caught"
         value={`$${stats.costSaved.toFixed(0)}`}
-        subtext="via circuit breakers"
+        subtext="stopped by circuit breakers"
         icon={<DollarSign className="h-6 w-6" />}
         accent="text-green-400"
       />

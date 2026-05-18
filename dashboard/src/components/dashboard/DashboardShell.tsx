@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Activity, AlertTriangle, Cpu, Network, Info, DollarSign } from "lucide-react";
+import { Shield, Activity, AlertTriangle, Cpu, Network, Info, DollarSign, ShieldAlert } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { StatsRow } from "./StatsRow";
@@ -104,12 +104,25 @@ function OverviewHero() {
             </div>
           </div>
 
-          {/* Right: directed judge path */}
-          <div className="flex-none text-xs text-slate-500 space-y-1.5 border-l border-slate-800 pl-4 max-w-[220px]">
-            <p className="font-semibold text-slate-400">Start here:</p>
-            <p>Press <span className="text-red-400 font-mono font-bold">8</span> to <span className="text-red-400">Simulate</span> → run <span className="text-red-400 font-semibold">Fork Bomb</span> (shows what only we catch)</p>
-            <p>→ then <span className="text-cyan-400">Audit Trail</span> (<span className="font-mono text-slate-400">4</span>)</p>
-            <p>→ then <span className="text-green-400">ROI</span> (<span className="font-mono text-slate-400">7</span>)</p>
+          {/* Right: directed judge path — impossible to miss */}
+          <div className="flex-none border border-cyan-500/20 bg-cyan-500/5 rounded-lg p-3 max-w-[240px]">
+            <p className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Judge Tour</p>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-cyan-300">①</span>
+                <span className="text-slate-300">Watch the attack auto-fire in <span className="text-red-400 font-bold">3s</span></span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-500 ml-6 text-xs">↓</div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-cyan-300">②</span>
+                <span className="text-slate-300">Press <span className="font-mono font-bold text-white bg-slate-800 px-1 rounded">4</span> for Audit Trail</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-500 ml-6 text-xs">↓</div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-cyan-300">③</span>
+                <span className="text-slate-300">Press <span className="font-mono font-bold text-white bg-slate-800 px-1 rounded">7</span> for ROI</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -119,6 +132,28 @@ function OverviewHero() {
 
       {/* Department Heatmap */}
       <DepartmentHeatmap />
+    </div>
+  );
+}
+
+function AttackToast() {
+  const { state, dispatch } = useGovernance();
+  const toast = state.toast;
+
+  useEffect(() => {
+    if (!toast?.visible) return;
+    const timer = setTimeout(() => {
+      dispatch({ type: "HIDE_TOAST" });
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [toast, dispatch]);
+
+  if (!toast?.visible) return null;
+
+  return (
+    <div className="animate-pulse flex items-center gap-3 px-6 py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 mb-2">
+      <ShieldAlert className="h-5 w-5 text-red-400 flex-none animate-bounce" />
+      <span className="text-sm font-bold tracking-wide">{toast.message}</span>
     </div>
   );
 }
@@ -189,6 +224,8 @@ export function DashboardShell() {
 
       {/* Main content */}
       <main className="flex-1 max-w-screen-2xl mx-auto w-full px-6 py-6 space-y-6">
+        {/* Attack toast — appears when a quarantine/threat event fires */}
+        <AttackToast />
         {/* Stats */}
         <StatsRow />
 

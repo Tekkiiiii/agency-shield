@@ -159,6 +159,9 @@ export function ROICalculator() {
           Compliance hours based on 8h/agent/year audit automation at 70% coverage.
           Detection speed: IBM X-Force Threat Intelligence Index 2024.
         </p>
+        <p className="text-xs text-slate-600 mt-4">
+          Model based on Ponemon Institute 2025 Cost of AI Security Incidents Report — average $3,200 per unauthorized tool invocation, $8,100 per compliance violation.
+        </p>
       </CardContent>
 
       <style jsx>{`

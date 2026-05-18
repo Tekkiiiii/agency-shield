@@ -118,8 +118,11 @@ const DEFAULT_POLICIES: PolicyRule[] = [
   },
 ];
 
+// Module-level hit count map — avoids mutating the DEFAULT_POLICIES constant
+const hitCounts = new Map<string, number>();
+
 export function getPolicies(): PolicyRule[] {
-  return [...DEFAULT_POLICIES];
+  return DEFAULT_POLICIES.map((p) => ({ ...p, hitCount: hitCounts.get(p.id) ?? 0 }));
 }
 
 export function matchPolicy(flags: string[]): { policy: PolicyRule; action: PolicyAction } | null {
@@ -128,8 +131,8 @@ export function matchPolicy(flags: string[]): { policy: PolicyRule; action: Poli
       if (!policy.enabled) continue;
       const policyPattern = policy.pattern.replace("*", "");
       if (flag.startsWith(policyPattern) || flag === policy.pattern) {
-        policy.hitCount++;
-        return { policy, action: policy.action };
+        hitCounts.set(policy.id, (hitCounts.get(policy.id) ?? 0) + 1);
+        return { policy: { ...policy, hitCount: hitCounts.get(policy.id)! }, action: policy.action };
       }
     }
   }

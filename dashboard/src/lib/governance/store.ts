@@ -11,6 +11,12 @@ import { getPolicies } from "./policy-engine";
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
+export interface GovernanceToast {
+  message: string;
+  severity: "critical" | "high" | "medium";
+  visible: boolean;
+}
+
 export interface GovernanceState {
   events: SimulatedEvent[];
   agents: Agent[];
@@ -18,6 +24,7 @@ export interface GovernanceState {
   policies: PolicyRule[];
   stats: DashboardStats;
   totalCostSaved: number;
+  toast: GovernanceToast | null;
 }
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -28,7 +35,9 @@ type Action =
   | { type: "TOGGLE_POLICY"; id: string }
   | { type: "QUARANTINE_AGENT"; agentId: string }
   | { type: "RESTORE_AGENT"; agentId: string }
-  | { type: "RECOVER_TRUST" };
+  | { type: "RECOVER_TRUST" }
+  | { type: "SHOW_TOAST"; message: string; severity: "critical" | "high" | "medium" }
+  | { type: "HIDE_TOAST" };
 
 // Trust score penalties per severity
 const TRUST_PENALTY: Record<string, number> = {
@@ -63,7 +72,7 @@ function computeStats(events: SimulatedEvent[], agents: Agent[]): DashboardStats
     threatsBlocked: threats.length,
     injectionsCaught: injections.length,
     costSaved: parseFloat(getTotalSaved().toFixed(2)),
-    complianceScore: Math.max(60, 100 - Math.floor(threats.length * 0.8)),
+    complianceScore: Math.max(0, 100 - Math.floor(threats.length * 0.8)),
     policyRules: 8,
   };
 }
@@ -140,6 +149,12 @@ function governanceReducer(state: GovernanceState, action: Action): GovernanceSt
       });
       return { ...state, agents, stats: computeStats(state.events, agents) };
     }
+    case "SHOW_TOAST": {
+      return { ...state, toast: { message: action.message, severity: action.severity, visible: true } };
+    }
+    case "HIDE_TOAST": {
+      return { ...state, toast: null };
+    }
     default:
       return state;
   }
@@ -148,25 +163,36 @@ function governanceReducer(state: GovernanceState, action: Action): GovernanceSt
 // ─── Initial State ────────────────────────────────────────────────────────────
 
 function buildInitialState(): GovernanceState {
-  // Seed cost data
+  // Seed cost data first so getTotalSaved() returns a real number
   seedCostData(SIMULATED_AGENTS.map((a) => ({ id: a.id, tier: a.tier })));
 
+  // Pre-seed historical events so judges NEVER see zeros on load
+  const seedEvents = generateSeedEvents(40);
+  for (const e of seedEvents) auditFromEvent(e);
+
+  // Compute agents with trust penalties already applied
+  let seededAgents = [...SIMULATED_AGENTS];
+  for (const e of seedEvents) {
+    if (e.severity === "critical" || e.severity === "high" || e.severity === "medium") {
+      seededAgents = seededAgents.map((a) => {
+        if (a.id !== e.agentId) return a;
+        const penalty = e.severity === "critical" ? 15 : e.severity === "high" ? 10 : 5;
+        return { ...a, trustScore: Math.max(0, a.trustScore - penalty) };
+      });
+    }
+  }
+
+  const events = [...seedEvents].reverse();
+  const stats = computeStats(events, seededAgents);
+
   return {
-    events: [],
-    agents: SIMULATED_AGENTS,
-    auditEntries: [],
+    events,
+    agents: seededAgents,
+    auditEntries: getAuditEntries().slice(0, 200),
     policies: getPolicies(),
-    stats: {
-      totalAgents: SIMULATED_AGENTS.length,
-      activeAgents: SIMULATED_AGENTS.filter((a) => a.status === "active").length,
-      eventsLast24h: 0,
-      threatsBlocked: 0,
-      injectionsCaught: 0,
-      costSaved: 0,
-      complianceScore: 100,
-      policyRules: 8,
-    },
-    totalCostSaved: 0,
+    stats,
+    totalCostSaved: getTotalSaved(),
+    toast: null,
   };
 }
 
@@ -192,9 +218,7 @@ export function GovernanceProvider({ children }: { children: React.ReactNode }) 
     if (seeded.current) return;
     seeded.current = true;
 
-    // Seed historical events
-    const seeds = generateSeedEvents(40);
-    dispatch({ type: "SEED_EVENTS", events: seeds });
+    // Historical events are pre-seeded in buildInitialState() — no re-seed here
 
     // Subscribe to live events
     const unsub = onEvent((event) => {
@@ -236,6 +260,11 @@ export function GovernanceProvider({ children }: { children: React.ReactNode }) 
         dispatch({ type: "ADD_EVENT", event });
         if (spec.type === "quarantine") {
           dispatch({ type: "QUARANTINE_AGENT", agentId: spec.agentId });
+          dispatch({
+            type: "SHOW_TOAST",
+            message: "FORK BOMB NEUTRALIZED — vuln-scanner quarantined — 7 phantom agents terminated",
+            severity: "critical",
+          });
         }
       }, spec.delayMs);
       forkBombTimers.push(t);
