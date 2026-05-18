@@ -26,7 +26,26 @@ type Action =
   | { type: "SEED_EVENTS"; events: SimulatedEvent[] }
   | { type: "TOGGLE_POLICY"; id: string }
   | { type: "QUARANTINE_AGENT"; agentId: string }
-  | { type: "RESTORE_AGENT"; agentId: string };
+  | { type: "RESTORE_AGENT"; agentId: string }
+  | { type: "RECOVER_TRUST" };
+
+// Trust score penalties per severity
+const TRUST_PENALTY: Record<string, number> = {
+  critical: 15,
+  high: 10,
+  medium: 5,
+  low: 2,
+};
+
+function applyTrustPenalty(agents: Agent[], agentId: string, severity: string): Agent[] {
+  const penalty = TRUST_PENALTY[severity] ?? 0;
+  if (penalty === 0) return agents;
+  return agents.map((a) => {
+    if (a.id !== agentId) return a;
+    const newScore = Math.max(0, a.trustScore - penalty);
+    return { ...a, trustScore: newScore };
+  });
+}
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 
@@ -54,22 +73,43 @@ function governanceReducer(state: GovernanceState, action: Action): GovernanceSt
       // Log to audit trail
       auditFromEvent(action.event);
       const events = [action.event, ...state.events].slice(0, 500);
+
+      // Apply trust score penalty for the affected agent
+      let updatedAgents = applyTrustPenalty(state.agents, action.event.agentId, action.event.severity);
+
+      // Auto-quarantine if trust drops below 30 and agent is not already blocked
+      updatedAgents = updatedAgents.map((a) => {
+        if (a.trustScore < 30 && a.status === "active") {
+          return { ...a, status: "blocked" as const };
+        }
+        return a;
+      });
+
       return {
         ...state,
         events,
+        agents: updatedAgents,
         auditEntries: getAuditEntries().slice(0, 200),
-        stats: computeStats(events, state.agents),
+        stats: computeStats(events, updatedAgents),
         totalCostSaved: getTotalSaved(),
       };
     }
     case "SEED_EVENTS": {
       for (const e of action.events) auditFromEvent(e);
       const events = [...action.events].reverse().concat(state.events).slice(0, 500);
+      // Apply trust penalties from seeded events
+      let seededAgents = state.agents;
+      for (const e of action.events) {
+        if (e.severity === "critical" || e.severity === "high" || e.severity === "medium") {
+          seededAgents = applyTrustPenalty(seededAgents, e.agentId, e.severity);
+        }
+      }
       return {
         ...state,
         events,
+        agents: seededAgents,
         auditEntries: getAuditEntries().slice(0, 200),
-        stats: computeStats(events, state.agents),
+        stats: computeStats(events, seededAgents),
         totalCostSaved: getTotalSaved(),
       };
     }
@@ -87,8 +127,16 @@ function governanceReducer(state: GovernanceState, action: Action): GovernanceSt
     }
     case "RESTORE_AGENT": {
       const agents = state.agents.map((a) =>
-        a.id === action.agentId ? { ...a, status: "active" as const } : a
+        a.id === action.agentId ? { ...a, status: "active" as const, trustScore: Math.min(100, a.trustScore + 20) } : a
       );
+      return { ...state, agents, stats: computeStats(state.events, agents) };
+    }
+    case "RECOVER_TRUST": {
+      // +1 trust per 30s for all non-quarantined agents (cap at 100)
+      const agents = state.agents.map((a) => {
+        if (a.status === "blocked") return a;
+        return { ...a, trustScore: Math.min(100, a.trustScore + 1) };
+      });
       return { ...state, agents, stats: computeStats(state.events, agents) };
     }
     default:
@@ -155,7 +203,15 @@ export function GovernanceProvider({ children }: { children: React.ReactNode }) 
     // Start simulator
     startSimulation();
 
-    return unsub;
+    // Trust recovery: +1 per 30 seconds for non-quarantined agents
+    const trustInterval = setInterval(() => {
+      dispatch({ type: "RECOVER_TRUST" });
+    }, 30_000);
+
+    return () => {
+      unsub();
+      clearInterval(trustInterval);
+    };
   }, []);
 
   const togglePolicy = useCallback((id: string) => {

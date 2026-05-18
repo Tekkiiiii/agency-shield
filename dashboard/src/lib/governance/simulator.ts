@@ -5,47 +5,47 @@ import { createGovernanceEvent } from "./policy-engine";
 
 export const SIMULATED_AGENTS: Agent[] = [
   // Engineering
-  { id: "ag-001", name: "engineering-lead", department: "Engineering", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-002", name: "backend-coordinator", department: "Engineering", role: "coordinator", tier: "sonnet", reportsTo: "ag-001", permissions: [], status: "active" },
-  { id: "ag-003", name: "api-builder", department: "Engineering", role: "member", tier: "haiku", reportsTo: "ag-002", permissions: [], status: "active" },
-  { id: "ag-004", name: "db-migrator", department: "Engineering", role: "member", tier: "haiku", reportsTo: "ag-002", permissions: [], status: "active" },
+  { id: "ag-001", name: "engineering-lead", department: "Engineering", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-002", name: "backend-coordinator", department: "Engineering", role: "coordinator", tier: "sonnet", reportsTo: "ag-001", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-003", name: "api-builder", department: "Engineering", role: "member", tier: "haiku", reportsTo: "ag-002", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-004", name: "db-migrator", department: "Engineering", role: "member", tier: "haiku", reportsTo: "ag-002", permissions: [], status: "active", trustScore: 100 },
   // Security
-  { id: "ag-005", name: "security-lead", department: "Security", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-006", name: "threat-analyst", department: "Security", role: "coordinator", tier: "sonnet", reportsTo: "ag-005", permissions: [], status: "active" },
-  { id: "ag-007", name: "vuln-scanner", department: "Security", role: "member", tier: "haiku", reportsTo: "ag-006", permissions: [], status: "active" },
+  { id: "ag-005", name: "security-lead", department: "Security", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-006", name: "threat-analyst", department: "Security", role: "coordinator", tier: "sonnet", reportsTo: "ag-005", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-007", name: "vuln-scanner", department: "Security", role: "member", tier: "haiku", reportsTo: "ag-006", permissions: [], status: "active", trustScore: 100 },
   // Finance
-  { id: "ag-008", name: "finance-lead", department: "Finance", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-009", name: "budget-monitor", department: "Finance", role: "coordinator", tier: "sonnet", reportsTo: "ag-008", permissions: [], status: "active" },
-  { id: "ag-010", name: "invoice-processor", department: "Finance", role: "member", tier: "haiku", reportsTo: "ag-009", permissions: [], status: "active" },
+  { id: "ag-008", name: "finance-lead", department: "Finance", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-009", name: "budget-monitor", department: "Finance", role: "coordinator", tier: "sonnet", reportsTo: "ag-008", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-010", name: "invoice-processor", department: "Finance", role: "member", tier: "haiku", reportsTo: "ag-009", permissions: [], status: "active", trustScore: 100 },
   // Marketing
-  { id: "ag-011", name: "marketing-lead", department: "Marketing", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-012", name: "content-coordinator", department: "Marketing", role: "coordinator", tier: "sonnet", reportsTo: "ag-011", permissions: [], status: "active" },
-  { id: "ag-013", name: "social-writer", department: "Marketing", role: "member", tier: "haiku", reportsTo: "ag-012", permissions: [], status: "active" },
+  { id: "ag-011", name: "marketing-lead", department: "Marketing", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-012", name: "content-coordinator", department: "Marketing", role: "coordinator", tier: "sonnet", reportsTo: "ag-011", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-013", name: "social-writer", department: "Marketing", role: "member", tier: "haiku", reportsTo: "ag-012", permissions: [], status: "active", trustScore: 100 },
   // Compliance
-  { id: "ag-014", name: "compliance-lead", department: "Compliance", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-015", name: "audit-coordinator", department: "Compliance", role: "coordinator", tier: "sonnet", reportsTo: "ag-014", permissions: [], status: "active" },
+  { id: "ag-014", name: "compliance-lead", department: "Compliance", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-015", name: "audit-coordinator", department: "Compliance", role: "coordinator", tier: "sonnet", reportsTo: "ag-014", permissions: [], status: "active", trustScore: 100 },
   // HR
-  { id: "ag-016", name: "hr-lead", department: "HR", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-017", name: "onboarding-agent", department: "HR", role: "member", tier: "haiku", reportsTo: "ag-016", permissions: [], status: "active" },
+  { id: "ag-016", name: "hr-lead", department: "HR", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-017", name: "onboarding-agent", department: "HR", role: "member", tier: "haiku", reportsTo: "ag-016", permissions: [], status: "active", trustScore: 100 },
   // Legal
-  { id: "ag-018", name: "legal-lead", department: "Legal", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-019", name: "contract-reviewer", department: "Legal", role: "member", tier: "sonnet", reportsTo: "ag-018", permissions: [], status: "active" },
+  { id: "ag-018", name: "legal-lead", department: "Legal", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-019", name: "contract-reviewer", department: "Legal", role: "member", tier: "sonnet", reportsTo: "ag-018", permissions: [], status: "active", trustScore: 100 },
   // Data
-  { id: "ag-020", name: "data-lead", department: "Data", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-021", name: "pipeline-builder", department: "Data", role: "member", tier: "haiku", reportsTo: "ag-020", permissions: [], status: "active" },
-  { id: "ag-022", name: "analytics-agent", department: "Data", role: "member", tier: "haiku", reportsTo: "ag-020", permissions: [], status: "active" },
+  { id: "ag-020", name: "data-lead", department: "Data", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-021", name: "pipeline-builder", department: "Data", role: "member", tier: "haiku", reportsTo: "ag-020", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-022", name: "analytics-agent", department: "Data", role: "member", tier: "haiku", reportsTo: "ag-020", permissions: [], status: "active", trustScore: 100 },
   // DevOps
-  { id: "ag-023", name: "devops-lead", department: "DevOps", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-024", name: "deploy-agent", department: "DevOps", role: "member", tier: "haiku", reportsTo: "ag-023", permissions: [], status: "active" },
+  { id: "ag-023", name: "devops-lead", department: "DevOps", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-024", name: "deploy-agent", department: "DevOps", role: "member", tier: "haiku", reportsTo: "ag-023", permissions: [], status: "active", trustScore: 100 },
   // Support
-  { id: "ag-025", name: "support-lead", department: "Support", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-026", name: "ticket-resolver", department: "Support", role: "member", tier: "haiku", reportsTo: "ag-025", permissions: [], status: "active" },
+  { id: "ag-025", name: "support-lead", department: "Support", role: "leader", tier: "sonnet", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-026", name: "ticket-resolver", department: "Support", role: "member", tier: "haiku", reportsTo: "ag-025", permissions: [], status: "active", trustScore: 100 },
   // Research
-  { id: "ag-027", name: "research-lead", department: "Research", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-028", name: "web-researcher", department: "Research", role: "member", tier: "haiku", reportsTo: "ag-027", permissions: [], status: "active" },
+  { id: "ag-027", name: "research-lead", department: "Research", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-028", name: "web-researcher", department: "Research", role: "member", tier: "haiku", reportsTo: "ag-027", permissions: [], status: "active", trustScore: 100 },
   // Product
-  { id: "ag-029", name: "product-lead", department: "Product", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active" },
-  { id: "ag-030", name: "requirements-agent", department: "Product", role: "member", tier: "sonnet", reportsTo: "ag-029", permissions: [], status: "active" },
+  { id: "ag-029", name: "product-lead", department: "Product", role: "leader", tier: "opus", reportsTo: "root", permissions: [], status: "active", trustScore: 100 },
+  { id: "ag-030", name: "requirements-agent", department: "Product", role: "member", tier: "sonnet", reportsTo: "ag-029", permissions: [], status: "active", trustScore: 100 },
 ];
 
 // ─── Event Templates ──────────────────────────────────────────────────────────

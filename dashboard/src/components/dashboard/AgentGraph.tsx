@@ -354,11 +354,20 @@ export function AgentGraph() {
               const fill = isQuarantined
                 ? "#7f1d1d"
                 : TIER_FILL[agent.tier];
+
+              // Trust-based border: green > 70, yellow 30-70, red < 30
+              const trustStroke =
+                agent.trustScore > 70
+                  ? "#4ade80"
+                  : agent.trustScore > 30
+                  ? "#facc15"
+                  : "#f87171";
+
               const stroke = isQuarantined
                 ? "#dc2626"
                 : isPulsing
                 ? "#f87171"
-                : TIER_STROKE[agent.tier];
+                : trustStroke;
 
               return (
                 <g key={agent.id} filter={isPulsing ? "url(#glow-red)" : undefined}>
@@ -421,6 +430,26 @@ export function AgentGraph() {
                       fontWeight={agent.role === "leader" ? "600" : "400"}
                     >
                       {agent.name.replace(/-/g, " ").split(" ").slice(0, 2).join(" ")}
+                    </text>
+                  )}
+
+                  {/* Trust score label for all non-member agents */}
+                  {agent.role !== "member" && (
+                    <text
+                      x={pos.x}
+                      y={pos.y + r + 21}
+                      textAnchor="middle"
+                      fontSize={6}
+                      fontFamily="ui-monospace, monospace"
+                      fill={
+                        agent.trustScore > 70
+                          ? "#4ade8099"
+                          : agent.trustScore > 30
+                          ? "#facc1599"
+                          : "#f8717199"
+                      }
+                    >
+                      t:{Math.round(agent.trustScore)}
                     </text>
                   )}
 

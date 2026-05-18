@@ -35,9 +35,46 @@ function PermissionCount({ agent }: { agent: Agent }) {
   return <span className="font-mono text-slate-300">{base + roleBonus}</span>;
 }
 
+function TrustBar({ score }: { score: number }) {
+  const clampedScore = Math.max(0, Math.min(100, Math.round(score)));
+  const color =
+    clampedScore > 70
+      ? "bg-green-400"
+      : clampedScore > 30
+      ? "bg-yellow-400"
+      : "bg-red-400";
+  const textColor =
+    clampedScore > 70
+      ? "text-green-400"
+      : clampedScore > 30
+      ? "text-yellow-400"
+      : "text-red-400";
+
+  return (
+    <div className="flex items-center gap-2 min-w-[80px]">
+      <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-1000 ${color}`}
+          style={{ width: `${clampedScore}%` }}
+        />
+      </div>
+      <span className={`text-xs font-mono tabular-nums w-8 text-right ${textColor}`}>
+        {clampedScore}
+      </span>
+    </div>
+  );
+}
+
 export function AgentsTable() {
   const { state } = useGovernance();
-  const agents = state.agents;
+
+  // Sort: quarantined first, then by trust score ascending, then alphabetically
+  const agents = [...state.agents].sort((a, b) => {
+    if (a.status === "blocked" && b.status !== "blocked") return -1;
+    if (b.status === "blocked" && a.status !== "blocked") return 1;
+    if (a.trustScore !== b.trustScore) return a.trustScore - b.trustScore;
+    return a.name.localeCompare(b.name);
+  });
 
   const depts = [...new Set(agents.map((a) => a.department))].sort();
 
@@ -73,6 +110,7 @@ export function AgentsTable() {
                 <TableHead className="text-slate-400 font-medium text-xs uppercase tracking-wider">Tier</TableHead>
                 <TableHead className="text-slate-400 font-medium text-xs uppercase tracking-wider">Reports To</TableHead>
                 <TableHead className="text-slate-400 font-medium text-xs uppercase tracking-wider">Permissions</TableHead>
+                <TableHead className="text-slate-400 font-medium text-xs uppercase tracking-wider">Trust</TableHead>
                 <TableHead className="text-slate-400 font-medium text-xs uppercase tracking-wider">Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -114,6 +152,9 @@ export function AgentsTable() {
                     </TableCell>
                     <TableCell>
                       <PermissionCount agent={agent} />
+                    </TableCell>
+                    <TableCell>
+                      <TrustBar score={agent.trustScore} />
                     </TableCell>
                     <TableCell>
                       <Badge

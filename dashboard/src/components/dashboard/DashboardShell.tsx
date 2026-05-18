@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, Activity, AlertTriangle, Cpu, Network, Info } from "lucide-react";
+import { Shield, Activity, AlertTriangle, Cpu, Network, Info, DollarSign } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { StatsRow } from "./StatsRow";
@@ -11,6 +11,7 @@ import { AuditTrail } from "./AuditTrail";
 import { PoliciesPanel } from "./PoliciesPanel";
 import { AttackSimulator } from "./AttackSimulator";
 import { LobsterTrapConfig } from "./LobsterTrapConfig";
+import { ROICalculator } from "./ROICalculator";
 import { useGovernance } from "@/lib/governance/store";
 
 function ThreatLevelBadge() {
@@ -103,6 +104,7 @@ function OverviewHero() {
           <p className="font-semibold text-slate-400">Explore:</p>
           <p><span className="text-cyan-400">Live Feed</span> — real-time events</p>
           <p><span className="text-cyan-400">Topology</span> — visual agent graph</p>
+          <p><span className="text-green-400">ROI</span> — interactive savings calculator</p>
           <p><span className="text-red-400">Simulate</span> — fire attack scenarios</p>
           <p><span className="text-violet-400">Lobster Trap</span> — DPI config</p>
         </div>
@@ -203,6 +205,13 @@ export function DashboardShell() {
               Lobster Trap
             </TabsTrigger>
             <TabsTrigger
+              value="roi"
+              className="text-slate-400 data-[state=active]:bg-green-900/40 data-[state=active]:text-green-300 flex items-center gap-1.5"
+            >
+              <DollarSign className="h-3.5 w-3.5" />
+              ROI
+            </TabsTrigger>
+            <TabsTrigger
               value="simulate"
               className="text-slate-400 data-[state=active]:bg-red-900/40 data-[state=active]:text-red-300"
             >
@@ -227,6 +236,9 @@ export function DashboardShell() {
           </TabsContent>
           <TabsContent value="lobstertrap" className="mt-0">
             <LobsterTrapConfig />
+          </TabsContent>
+          <TabsContent value="roi" className="mt-0">
+            <ROICalculator />
           </TabsContent>
           <TabsContent value="simulate" className="mt-0">
             <AttackSimulator />

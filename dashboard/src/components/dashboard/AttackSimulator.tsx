@@ -236,6 +236,68 @@ const SCENARIOS: AttackScenario[] = [
   },
 ];
 
+// ─── Delegation Chain Visualization ──────────────────────────────────────────
+
+function DelegationChain() {
+  const nodes = [
+    { label: "vuln-scanner", depth: 1, blocked: false },
+    { label: "spawn-1", depth: 2, blocked: false },
+    { label: "spawn-2", depth: 3, blocked: false },
+    { label: "spawn-3", depth: 4, blocked: false },
+    { label: "BLOCKED\ndepth=4", depth: 5, blocked: true },
+  ];
+
+  return (
+    <div className="mt-3 p-3 rounded-lg border border-red-900/40 bg-red-950/20">
+      <p className="text-xs text-red-400 font-semibold mb-2 flex items-center gap-1.5">
+        <Bug className="h-3.5 w-3.5" />
+        Delegation Chain — caught at depth 4 (LLM-layer firewall was blind to this)
+      </p>
+      <div className="flex items-center gap-0 overflow-x-auto">
+        {nodes.map((node, i) => (
+          <div key={i} className="flex items-center flex-none">
+            <div
+              className={`flex flex-col items-center justify-center px-2.5 py-1.5 rounded border text-xs font-mono whitespace-pre-line text-center ${
+                node.blocked
+                  ? "border-red-500 bg-red-900/30 text-red-300"
+                  : "border-slate-700 bg-slate-800/60 text-slate-300"
+              }`}
+              style={{ minWidth: "72px" }}
+            >
+              {node.blocked ? (
+                <>
+                  <span className="text-red-400 font-bold text-sm">&#x2717;</span>
+                  <span className="text-red-400 font-semibold text-xs leading-tight">
+                    BLOCKED
+                  </span>
+                  <span className="text-red-600 text-xs">depth=4</span>
+                </>
+              ) : (
+                <>
+                  <span>{node.label}</span>
+                  <span className="text-slate-500 text-xs">d={node.depth}</span>
+                </>
+              )}
+            </div>
+            {i < nodes.length - 1 && (
+              <div className="px-1 text-slate-600 text-xs font-bold flex-none">
+                {nodes[i + 1].blocked ? (
+                  <span className="text-red-600">&#x2192;</span>
+                ) : (
+                  <span>&#x2192;</span>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-slate-600 mt-2">
+        Agency Shield DelegationGuard enforces max-depth=3. The LLM-layer proxy sees HTTP calls but cannot interpret delegation intent — only orchestration-layer governance can stop this.
+      </p>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface ScenarioState {
@@ -373,6 +435,11 @@ export function AttackSimulator() {
                     style={{ width: `${(eventsInjected / scenario.events.length) * 100}%` }}
                   />
                 </div>
+              )}
+
+              {/* Delegation chain — shown after fork bomb completes */}
+              {scenario.id === "fork-bomb" && isCompleted && (
+                <DelegationChain />
               )}
             </div>
           );

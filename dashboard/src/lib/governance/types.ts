@@ -12,6 +12,7 @@ export interface Agent {
   reportsTo: string;
   permissions: Permission[];
   status: "active" | "idle" | "blocked" | "terminated";
+  trustScore: number;
 }
 
 export interface Permission {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGovernance } from "@/lib/governance/store";
 import {
-  Users, AlertOctagon, Zap, ShieldOff, DollarSign, CheckCircle2
+  Users, AlertOctagon, Zap, ShieldOff, DollarSign, CheckCircle2, HeartPulse
 } from "lucide-react";
 
 interface StatCardProps {
@@ -107,8 +107,15 @@ export function StatsRow() {
       ? "text-yellow-400"
       : "text-red-400";
 
+  const avgTrust = state.agents.length > 0
+    ? Math.round(state.agents.reduce((sum, a) => sum + a.trustScore, 0) / state.agents.length)
+    : 100;
+
+  const trustColor =
+    avgTrust > 70 ? "text-green-400" : avgTrust > 30 ? "text-yellow-400" : "text-red-400";
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-7 gap-4">
       <StatCard
         label="Total Agents"
         value={stats.totalAgents}
@@ -152,6 +159,14 @@ export function StatsRow() {
         subtext="policy adherence"
         icon={<CheckCircle2 className="h-6 w-6" />}
         accent={complianceColor}
+      />
+      <StatCard
+        label="Avg Trust Score"
+        value={avgTrust}
+        subtext={avgTrust < 30 ? "critical — agents at risk" : avgTrust < 70 ? "degraded behavior" : "healthy fleet"}
+        icon={<HeartPulse className="h-6 w-6" />}
+        accent={trustColor}
+        pulse={avgTrust < 50}
       />
     </div>
   );
