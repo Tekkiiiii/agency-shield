@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Shield, Activity, AlertTriangle, Cpu, Network, Info, DollarSign } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +13,8 @@ import { PoliciesPanel } from "./PoliciesPanel";
 import { AttackSimulator } from "./AttackSimulator";
 import { LobsterTrapConfig } from "./LobsterTrapConfig";
 import { ROICalculator } from "./ROICalculator";
+import { ThreatIntel } from "./ThreatIntel";
+import { DepartmentHeatmap } from "./DepartmentHeatmap";
 import { useGovernance } from "@/lib/governance/store";
 
 function ThreatLevelBadge() {
@@ -53,67 +56,102 @@ function OverviewHero() {
   const depts = [...new Set(state.agents.map((a) => a.department))];
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Left: what it is */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Info className="h-3.5 w-3.5 text-cyan-400 flex-none" />
-            <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">What Agency Shield Does</span>
+    <div className="space-y-3">
+      {/* Main description row */}
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          {/* Left: what it is */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Info className="h-3.5 w-3.5 text-cyan-400 flex-none" />
+              <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">What Agency Shield Does</span>
+            </div>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Monitors <span className="text-white font-semibold">{state.agents.length} AI agents</span> across{" "}
+              <span className="text-white font-semibold">{depts.length} departments</span> with two independent security layers.{" "}
+              Defends against prompt injection, unauthorized tool use, fork bombs, cost overruns, and delegation attacks — at the{" "}
+              <span className="text-cyan-400 font-semibold">orchestration layer</span>, the blind spot every other security tool misses.
+            </p>
           </div>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            Monitors <span className="text-white font-semibold">{state.agents.length} AI agents</span> across{" "}
-            <span className="text-white font-semibold">{depts.length} departments</span> with two independent security layers.{" "}
-            Defends against prompt injection, unauthorized tool use, fork bombs, cost overruns, and delegation attacks — at the{" "}
-            <span className="text-cyan-400 font-semibold">orchestration layer</span>, the blind spot every other security tool misses.
-          </p>
-        </div>
 
-        {/* Center: defense-in-depth diagram */}
-        <div className="flex-none">
-          <div className="flex items-center gap-0 text-xs font-mono">
-            <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-slate-700 bg-slate-800/60">
-              <span className="text-slate-400 text-xs">AI Agents</span>
+          {/* Center: defense-in-depth diagram */}
+          <div className="flex-none">
+            <div className="flex items-center gap-0 text-xs font-mono">
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-slate-700 bg-slate-800/60">
+                <span className="text-slate-400 text-xs">AI Agents</span>
+              </div>
+              <div className="text-slate-600 px-1 text-xs">→</div>
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-violet-700/50 bg-violet-900/20">
+                <Cpu className="h-3 w-3 text-violet-400" />
+                <span className="text-violet-300 text-xs">Lobster Trap</span>
+                <span className="text-violet-600" style={{ fontSize: "9px" }}>LLM layer</span>
+              </div>
+              <div className="text-slate-600 px-1 text-xs">→</div>
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-slate-700 bg-slate-800/60">
+                <span className="text-slate-400 text-xs">LLM API</span>
+              </div>
             </div>
-            <div className="text-slate-600 px-1 text-xs">→</div>
-            <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-violet-700/50 bg-violet-900/20">
-              <Cpu className="h-3 w-3 text-violet-400" />
-              <span className="text-violet-300 text-xs">Lobster Trap</span>
-              <span className="text-violet-600" style={{ fontSize: "9px" }}>LLM layer</span>
+            <div className="flex justify-start pl-3 mt-0">
+              <div className="text-slate-600 text-xs font-mono ml-3">│</div>
             </div>
-            <div className="text-slate-600 px-1 text-xs">→</div>
-            <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-slate-700 bg-slate-800/60">
-              <span className="text-slate-400 text-xs">LLM API</span>
+            <div className="flex items-center gap-0 text-xs font-mono pl-3">
+              <div className="text-slate-600 text-xs font-mono mr-1">▼</div>
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-cyan-700/50 bg-cyan-900/20">
+                <Shield className="h-3 w-3 text-cyan-400" />
+                <span className="text-cyan-300 text-xs">Agency Shield</span>
+                <span className="text-cyan-600" style={{ fontSize: "9px" }}>Orchestration layer</span>
+              </div>
             </div>
           </div>
-          <div className="flex justify-start pl-3 mt-0">
-            <div className="text-slate-600 text-xs font-mono ml-3">│</div>
-          </div>
-          <div className="flex items-center gap-0 text-xs font-mono pl-3">
-            <div className="text-slate-600 text-xs font-mono mr-1">▼</div>
-            <div className="flex flex-col items-center gap-0.5 px-3 py-2 rounded border border-cyan-700/50 bg-cyan-900/20">
-              <Shield className="h-3 w-3 text-cyan-400" />
-              <span className="text-cyan-300 text-xs">Agency Shield</span>
-              <span className="text-cyan-600" style={{ fontSize: "9px" }}>Orchestration layer</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Right: quick nav hint */}
-        <div className="flex-none text-xs text-slate-500 space-y-1.5 border-l border-slate-800 pl-4">
-          <p className="font-semibold text-slate-400">Explore:</p>
-          <p><span className="text-cyan-400">Live Feed</span> — real-time events</p>
-          <p><span className="text-cyan-400">Topology</span> — visual agent graph</p>
-          <p><span className="text-green-400">ROI</span> — interactive savings calculator</p>
-          <p><span className="text-red-400">Simulate</span> — fire attack scenarios</p>
-          <p><span className="text-violet-400">Lobster Trap</span> — DPI config</p>
+          {/* Right: quick nav hint */}
+          <div className="flex-none text-xs text-slate-500 space-y-1.5 border-l border-slate-800 pl-4">
+            <p className="font-semibold text-slate-400">Explore:</p>
+            <p><span className="text-cyan-400">Live Feed</span> — real-time events</p>
+            <p><span className="text-cyan-400">Topology</span> — visual agent graph</p>
+            <p><span className="text-green-400">ROI</span> — interactive savings calculator</p>
+            <p><span className="text-red-400">Simulate</span> — fire attack scenarios</p>
+            <p><span className="text-violet-400">Lobster Trap</span> — DPI config</p>
+          </div>
         </div>
       </div>
+
+      {/* Threat Intelligence — AI-powered heuristic analysis */}
+      <ThreatIntel />
+
+      {/* Department Heatmap */}
+      <DepartmentHeatmap />
     </div>
   );
 }
 
+const TAB_ORDER = ["feed", "topology", "agents", "audit", "policies", "lobstertrap", "roi", "simulate"] as const;
+type TabValue = typeof TAB_ORDER[number];
+
 export function DashboardShell() {
+  const [activeTab, setActiveTab] = useState<TabValue>("feed");
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      // Ignore when typing in an input/textarea
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement)?.isContentEditable
+      ) return;
+
+      const digit = parseInt(e.key, 10);
+      if (digit >= 1 && digit <= TAB_ORDER.length) {
+        setActiveTab(TAB_ORDER[digit - 1]);
+        return;
+      }
+    }
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
@@ -163,19 +201,21 @@ export function DashboardShell() {
 
         <Separator className="bg-slate-800" />
 
-        {/* Tabs */}
-        <Tabs defaultValue="feed" className="space-y-4">
+        {/* Tabs — keyboard-navigable with 1-8 keys */}
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabValue)} className="space-y-4">
           <TabsList className="bg-slate-900 border border-slate-800 p-1 flex-wrap">
             <TabsTrigger
               value="feed"
               className="text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-white"
             >
+              <span className="hidden sm:inline text-slate-600 mr-1.5 text-xs font-mono">1</span>
               Live Feed
             </TabsTrigger>
             <TabsTrigger
               value="topology"
               className="text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-white flex items-center gap-1.5"
             >
+              <span className="hidden sm:inline text-slate-600 mr-0.5 text-xs font-mono">2</span>
               <Network className="h-3.5 w-3.5" />
               Topology
             </TabsTrigger>
@@ -183,24 +223,28 @@ export function DashboardShell() {
               value="agents"
               className="text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-white"
             >
+              <span className="hidden sm:inline text-slate-600 mr-1.5 text-xs font-mono">3</span>
               Agents
             </TabsTrigger>
             <TabsTrigger
               value="audit"
               className="text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-white"
             >
+              <span className="hidden sm:inline text-slate-600 mr-1.5 text-xs font-mono">4</span>
               Audit Trail
             </TabsTrigger>
             <TabsTrigger
               value="policies"
               className="text-slate-400 data-[state=active]:bg-slate-800 data-[state=active]:text-white"
             >
+              <span className="hidden sm:inline text-slate-600 mr-1.5 text-xs font-mono">5</span>
               Policies
             </TabsTrigger>
             <TabsTrigger
               value="lobstertrap"
               className="text-slate-400 data-[state=active]:bg-violet-900/40 data-[state=active]:text-violet-300 flex items-center gap-1.5"
             >
+              <span className="hidden sm:inline text-slate-600 mr-0.5 text-xs font-mono">6</span>
               <Cpu className="h-3.5 w-3.5" />
               Lobster Trap
             </TabsTrigger>
@@ -208,6 +252,7 @@ export function DashboardShell() {
               value="roi"
               className="text-slate-400 data-[state=active]:bg-green-900/40 data-[state=active]:text-green-300 flex items-center gap-1.5"
             >
+              <span className="hidden sm:inline text-slate-600 mr-0.5 text-xs font-mono">7</span>
               <DollarSign className="h-3.5 w-3.5" />
               ROI
             </TabsTrigger>
@@ -215,6 +260,7 @@ export function DashboardShell() {
               value="simulate"
               className="text-slate-400 data-[state=active]:bg-red-900/40 data-[state=active]:text-red-300"
             >
+              <span className="hidden sm:inline text-slate-600 mr-1.5 text-xs font-mono">8</span>
               Simulate
             </TabsTrigger>
           </TabsList>
@@ -252,6 +298,9 @@ export function DashboardShell() {
         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-violet-500/10 border border-violet-500/20">
           <Cpu className="h-3 w-3 text-violet-500" />
           <span className="text-violet-400">Powered by Lobster Trap (Veea)</span>
+        </div>
+        <div className="hidden lg:flex items-center gap-1 text-slate-700">
+          <span>Keys 1–8 switch tabs</span>
         </div>
       </footer>
     </div>
