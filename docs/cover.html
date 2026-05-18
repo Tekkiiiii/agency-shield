@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency Shield Cover</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #0f172a;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background grid */
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Glow orbs */
+  .orb-left {
+    position: absolute;
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .orb-right {
+    position: absolute;
+    right: -80px;
+    bottom: -100px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.10) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  /* Shield icon */
+  .shield-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .shield-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    animation: none;
+  }
+  .shield-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #4ade80;
+    border: 3px solid #0f172a;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+  }
+
+  /* Title */
+  .title {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #f1f5f9;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .title .accent { color: #22d3ee; }
+
+  /* Tagline */
+  .tagline {
+    font-size: 20px;
+    color: #94a3b8;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin-bottom: 40px;
+    max-width: 680px;
+    line-height: 1.4;
+  }
+
+  /* Feature pills */
+  .pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 44px;
+  }
+  .pill {
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+  }
+  .pill-red { background: rgba(239, 68, 68, 0.12); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3); }
+  .pill-orange { background: rgba(251, 146, 60, 0.12); color: #fdba74; border-color: rgba(251, 146, 60, 0.3); }
+  .pill-yellow { background: rgba(234, 179, 8, 0.12); color: #fde047; border-color: rgba(234, 179, 8, 0.3); }
+  .pill-cyan { background: rgba(34, 211, 238, 0.12); color: #67e8f9; border-color: rgba(34, 211, 238, 0.3); }
+  .pill-green { background: rgba(74, 222, 128, 0.12); color: #86efac; border-color: rgba(74, 222, 128, 0.3); }
+  .pill-purple { background: rgba(168, 85, 247, 0.12); color: #c4b5fd; border-color: rgba(168, 85, 247, 0.3); }
+
+  /* Bottom bar */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 100px;
+  }
+  .bottom-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+  }
+  .bottom-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .bottom-item.track { color: #94a3b8; }
+  .dot-green { background: #4ade80; }
+  .dot-cyan { background: #22d3ee; }
+  .dot-orange { background: #fb923c; }
+
+  /* Architecture diagram - right side decoration */
+  .arch-lines {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.06;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .arch-line {
+    height: 1px;
+    background: #22d3ee;
+    border-radius: 1px;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="orb-left"></div>
+  <div class="orb-right"></div>
+
+  <div class="content">
+    <!-- Shield icon (SVG) -->
+    <div class="shield-icon">
+      <div class="shield-ring"></div>
+      <div class="shield-dot"></div>
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 8L14 20V40C14 54.4 25.4 67.4 40 72C54.6 67.4 66 54.4 66 40V20L40 8Z" stroke="#22d3ee" stroke-width="2.5" stroke-linejoin="round" fill="rgba(34, 211, 238, 0.08)"/>
+        <path d="M30 40L37 47L52 33" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Title -->
+    <div class="title">
+      Agency<span class="accent">Shield</span>
+    </div>
+
+    <!-- Tagline -->
+    <div class="tagline">
+      Enterprise Governance Layer for Multi-Agent AI Systems<br>
+      Defense in depth: orchestration-layer security + Lobster Trap DPI
+    </div>
+
+    <!-- Feature pills -->
+    <div class="pills">
+      <div class="pill pill-red">Prompt Injection Shield</div>
+      <div class="pill pill-yellow">Tool Access Control</div>
+      <div class="pill pill-cyan">Policy Engine</div>
+      <div class="pill pill-orange">Cost Circuit Breakers</div>
+      <div class="pill pill-purple">Delegation Guard</div>
+      <div class="pill pill-green">Audit Trail</div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <div class="bottom-item track">
+        TechEx Intelligent Enterprise Solutions Hackathon 2026
+      </div>
+      <div class="bottom-item">
+        <div class="dot dot-cyan"></div>
+        Track 1: Agent Security & AI Governance
+      </div>
+      <div class="bottom-item">
+        <div class="dot dot-green"></div>
+        Powered by Lobster Trap DPI
+      </div>
+    </div>
+  </div>
+</body>
+</html>
