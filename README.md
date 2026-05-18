@@ -52,7 +52,7 @@ Agency Shield is a defense-in-depth governance platform that operates at two lay
 
 ## Live Demo
 
-**Dashboard**: [https://agency-shield.vercel.app](https://agency-shield.vercel.app)
+**Dashboard**: [https://agency-shield-demo.vercel.app](https://agency-shield-demo.vercel.app)
 
 ## Features
 
@@ -127,7 +127,7 @@ governance-engine/
 ## Quick Start
 
 ```bash
-git clone https://github.com/tekki-dev/agency-shield.git
+git clone https://github.com/Tekkiiiii/agency-shield.git
 cd agency-shield/dashboard
 npm install
 npm run dev

@@ -281,8 +281,8 @@ The governance engine code in `governance-engine/` is adapted from a production 
 **Defense in depth for multi-agent AI.**
 From the LLM call to the orchestration layer.
 
-**Demo**: agency-shield.vercel.app
+**Demo**: agency-shield-demo.vercel.app
 
-**GitHub**: github.com/tekki-dev/agency-shield
+**GitHub**: github.com/Tekkiiiii/agency-shield
 
 MIT Licensed · TechEx Hackathon 2026 · Track 1: Agent Security & AI Governance
