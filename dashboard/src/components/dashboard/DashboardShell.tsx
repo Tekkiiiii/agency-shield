@@ -104,14 +104,12 @@ function OverviewHero() {
             </div>
           </div>
 
-          {/* Right: quick nav hint */}
-          <div className="flex-none text-xs text-slate-500 space-y-1.5 border-l border-slate-800 pl-4">
-            <p className="font-semibold text-slate-400">Explore:</p>
-            <p><span className="text-cyan-400">Live Feed</span> — real-time events</p>
-            <p><span className="text-cyan-400">Topology</span> — visual agent graph</p>
-            <p><span className="text-green-400">ROI</span> — interactive savings calculator</p>
-            <p><span className="text-red-400">Simulate</span> — fire attack scenarios</p>
-            <p><span className="text-violet-400">Lobster Trap</span> — DPI config</p>
+          {/* Right: directed judge path */}
+          <div className="flex-none text-xs text-slate-500 space-y-1.5 border-l border-slate-800 pl-4 max-w-[220px]">
+            <p className="font-semibold text-slate-400">Start here:</p>
+            <p>Press <span className="text-red-400 font-mono font-bold">8</span> to <span className="text-red-400">Simulate</span> → run <span className="text-red-400 font-semibold">Fork Bomb</span> (shows what only we catch)</p>
+            <p>→ then <span className="text-cyan-400">Audit Trail</span> (<span className="font-mono text-slate-400">4</span>)</p>
+            <p>→ then <span className="text-green-400">ROI</span> (<span className="font-mono text-slate-400">7</span>)</p>
           </div>
         </div>
       </div>
@@ -301,6 +299,25 @@ export function DashboardShell() {
         </div>
         <div className="hidden lg:flex items-center gap-1 text-slate-700">
           <span>Keys 1–8 switch tabs</span>
+        </div>
+        <div className="hidden lg:flex items-center gap-2 text-slate-500">
+          <a
+            href="https://github.com/Tekkiiiii/agency-shield"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-cyan-400 underline text-xs transition-colors"
+          >
+            GitHub
+          </a>
+          <span className="text-slate-700">·</span>
+          <a
+            href="/docs/slides.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-cyan-400 underline text-xs transition-colors"
+          >
+            Slides
+          </a>
         </div>
       </footer>
     </div>

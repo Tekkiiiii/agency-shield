@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useReducer, useRef, useCallback }
 import type { GovernanceEvent, Agent, AuditEntry, PolicyRule, DashboardStats } from "./types";
 import type { SimulatedEvent } from "./simulator";
 import { generateSeedEvents, onEvent, startSimulation, SIMULATED_AGENTS } from "./simulator";
+import { createGovernanceEvent } from "./policy-engine";
 import { auditFromEvent, getAuditEntries } from "./audit";
 import { seedCostData, getTotalSaved, getAllGuardrails } from "./cost-monitor";
 import { getPolicies } from "./policy-engine";
@@ -208,9 +209,42 @@ export function GovernanceProvider({ children }: { children: React.ReactNode }) 
       dispatch({ type: "RECOVER_TRUST" });
     }, 30_000);
 
+    // Auto-fire Fork Bomb 3 seconds after load so judges land on action, not silence
+    const forkBombEvents: Array<{ delayMs: number; agentId: string; type: string; severity: string; policyAction: string; details: string }> = [
+      { delayMs: 3000, agentId: "ag-007", type: "permission_denied", severity: "high", policyAction: "DENY", details: "vuln-scanner attempted to spawn sub-agent (depth=2, limit=3) — allowed" },
+      { delayMs: 3600, agentId: "ag-007", type: "permission_denied", severity: "high", policyAction: "DENY", details: "DENIED: vuln-scanner attempted recursive spawn at depth=4 — delegation limit exceeded (pol-005)" },
+      { delayMs: 4200, agentId: "ag-007", type: "tool_blocked", severity: "critical", policyAction: "DENY", details: "BLOCKED: vuln-scanner called delegate_task x7 in 2s — fork bomb pattern detected by DelegationGuard" },
+      { delayMs: 5000, agentId: "ag-007", type: "quarantine", severity: "critical", policyAction: "QUARANTINE", details: "Agency Shield QUARANTINED vuln-scanner — LLM-layer firewall was blind to this, only orchestration-layer caught it" },
+      { delayMs: 5800, agentId: "ag-005", type: "escalation", severity: "critical", policyAction: "HUMAN_REVIEW", details: "Escalation: security-lead ALERTED — fork bomb neutralized, 7 phantom agents terminated" },
+    ];
+
+    const forkBombTimers: ReturnType<typeof setTimeout>[] = [];
+    for (const spec of forkBombEvents) {
+      const agent = SIMULATED_AGENTS.find((a) => a.id === spec.agentId)!;
+      const t = setTimeout(() => {
+        const base = createGovernanceEvent(
+          spec.type as Parameters<typeof createGovernanceEvent>[0],
+          spec.severity as Parameters<typeof createGovernanceEvent>[1],
+          agent.id,
+          agent.name,
+          agent.department,
+          spec.details,
+          spec.policyAction as Parameters<typeof createGovernanceEvent>[6],
+          { simulated: true, scenario: "fork-bomb", auto: true }
+        );
+        const event = { ...base, source: "Agency Shield" as const };
+        dispatch({ type: "ADD_EVENT", event });
+        if (spec.type === "quarantine") {
+          dispatch({ type: "QUARANTINE_AGENT", agentId: spec.agentId });
+        }
+      }, spec.delayMs);
+      forkBombTimers.push(t);
+    }
+
     return () => {
       unsub();
       clearInterval(trustInterval);
+      for (const t of forkBombTimers) clearTimeout(t);
     };
   }, []);
 

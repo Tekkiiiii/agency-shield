@@ -193,7 +193,7 @@ These attacks happen at the **orchestration layer** — above the LLM, below the
 
 ## The Dashboard
 
-Real-time governance visibility across 30 agents in 10 departments.
+Real-time governance visibility across 30 agents in 12 departments.
 
 **Live at:** `https://dashboard-iota-swart-15.vercel.app`
 Open the URL now — the dashboard runs a live 30-agent simulation automatically.
@@ -255,7 +255,7 @@ Both **Agency Shield** events (orchestration-layer) and **Lobster Trap DPI** eve
 
 **Compliance** — Tamper-evident audit trails answer the regulator's question: "What did your AI system do, and why?" Every action has a policy reference and evidence hash.
 
-**Operational visibility** — 30 agents across 10 departments, visible in one dashboard. Security and compliance teams see the same data in real time.
+**Operational visibility** — 30 agents across 12 departments, visible in one dashboard. Security and compliance teams see the same data in real time.
 
 > **$847 saved in 10-minute demo.** Based on 500-agent enterprise deployment at $0.03/1K tokens, 24/7 operation — circuit breakers prevent an estimated **$4.4M annually** in runaway compute costs.
 

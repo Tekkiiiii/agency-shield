@@ -42,7 +42,7 @@ Agency Shield is a defense-in-depth governance platform that operates at two lay
      ▼
 [Governance Dashboard]
      ├── Real-time Event Feed     — live governance events from both layers
-     ├── Agent Hierarchy          — 30-agent org across 10 departments
+     ├── Agent Hierarchy          — 30-agent org across 12 departments
      ├── Audit Trail              — filterable, sortable log
      ├── Policy Manager           — toggle rules, see hit counts
      └── Stats Dashboard          — threats blocked, cost saved, compliance %
@@ -136,7 +136,7 @@ npm run dev
 # Open http://localhost:3000
 ```
 
-The dashboard starts a simulation automatically, generating realistic multi-agent governance events across 30 agents in 10 departments.
+The dashboard starts a simulation automatically, generating realistic multi-agent governance events across 30 agents in 12 departments.
 
 ## Demo Scenario
 

@@ -37,7 +37,7 @@
 
 ## 2:30-3:30 — BUSINESS VALUE
 
-"30 agents, 10 departments, 8 policy rules, real-time compliance scoring. Every denial has a policy reference. Every escalation has a paper trail."
+"30 agents, 12 departments, 8 policy rules, real-time compliance scoring. Every denial has a policy reference. Every escalation has a paper trail."
 
 [Click Export CSV in Audit Trail] → "Enterprise compliance. One click."
 
