@@ -252,31 +252,54 @@ export function LiveFeed() {
           </button>
         </form>
 
-        {/* Lobster Trap result panel */}
+        {/* Dual-layer scan result panel */}
         {showResult && lastResult && (
-          <div className={`mt-2 rounded-lg border p-3 text-xs font-mono ${
-            lastResult.action === "ALLOW"
-              ? "bg-green-900/20 border-green-800/40"
-              : lastResult.action === "QUARANTINE"
-              ? "bg-red-900/20 border-red-800/40"
-              : "bg-orange-900/20 border-orange-800/40"
-          }`}>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-slate-400 font-semibold text-xs">Agency Shield Scanner Response</span>
-              <span className={`font-bold ${
-                lastResult.action === "ALLOW" ? "text-green-400"
-                  : lastResult.action === "QUARANTINE" ? "text-red-400"
-                  : "text-orange-400"
-              }`}>
-                {lastResult.action} · {lastResult.scan_duration_ms}ms
-              </span>
+          <div className="mt-2 space-y-2">
+            {/* Layer 1: Orchestration (Agency Shield) */}
+            <div className={`rounded-lg border p-3 text-xs font-mono ${
+              lastResult.action === "ALLOW"
+                ? "bg-green-900/20 border-green-800/40"
+                : lastResult.action === "QUARANTINE"
+                ? "bg-red-900/20 border-red-800/40"
+                : "bg-orange-900/20 border-orange-800/40"
+            }`}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2 w-2 rounded-full bg-cyan-400" />
+                  <span className="text-cyan-400 font-semibold text-xs">Orchestration-Layer Scan (Agency Shield)</span>
+                </div>
+                <span className={`font-bold ${
+                  lastResult.action === "ALLOW" ? "text-green-400"
+                    : lastResult.action === "QUARANTINE" ? "text-red-400"
+                    : "text-orange-400"
+                }`}>
+                  {lastResult.action} · {lastResult.scan_duration_ms}ms
+                </span>
+              </div>
+              <pre className="text-slate-400 text-xs whitespace-pre-wrap break-all leading-relaxed">
+                {JSON.stringify(lastResult, null, 2)}
+              </pre>
             </div>
-            <pre className="text-slate-400 text-xs whitespace-pre-wrap break-all leading-relaxed">
-              {JSON.stringify(lastResult, null, 2)}
-            </pre>
+
+            {/* Layer 2: LLM layer (Lobster Trap — dimmed if not connected) */}
+            <div className="rounded-lg border border-violet-900/40 bg-violet-950/20 p-3 text-xs font-mono opacity-60">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <div className="h-2 w-2 rounded-full bg-violet-400" />
+                <span className="text-violet-400 font-semibold text-xs">LLM-Layer Scan (Lobster Trap DPI)</span>
+                <span className="text-slate-600 text-xs ml-auto">not connected — deploy lobstertrap serve -c lobstertrap.yaml</span>
+              </div>
+              <pre className="text-slate-600 text-xs">
+                {`{
+  "status": "not_connected",
+  "note": "Deploy Lobster Trap to enable LLM-layer DPI",
+  "config": "/api/lobstertrap-config"
+}`}
+              </pre>
+            </div>
+
             <button
               onClick={() => setShowResult(false)}
-              className="mt-1.5 text-slate-600 hover:text-slate-400 transition-colors"
+              className="text-slate-600 hover:text-slate-400 transition-colors text-xs"
             >
               dismiss
             </button>
