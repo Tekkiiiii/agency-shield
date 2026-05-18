@@ -83,7 +83,11 @@ export function AgentsTable() {
                 return (
                   <TableRow
                     key={agent.id}
-                    className="border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+                    className={`border-slate-800/60 transition-colors ${
+                      agent.status === "blocked"
+                        ? "bg-red-950/40 hover:bg-red-950/50 border-red-900/40"
+                        : "hover:bg-slate-800/30"
+                    }`}
                   >
                     <TableCell className="font-mono text-sm text-slate-200">
                       <div className="flex items-center gap-2">
@@ -114,9 +118,9 @@ export function AgentsTable() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className={`text-xs ${STATUS_STYLES[agent.status]}`}
+                        className={`text-xs font-semibold ${STATUS_STYLES[agent.status]}`}
                       >
-                        {agent.status}
+                        {agent.status === "blocked" ? "QUARANTINED" : agent.status}
                       </Badge>
                     </TableCell>
                   </TableRow>

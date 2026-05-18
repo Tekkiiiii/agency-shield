@@ -24,7 +24,9 @@ export interface GovernanceState {
 type Action =
   | { type: "ADD_EVENT"; event: SimulatedEvent }
   | { type: "SEED_EVENTS"; events: SimulatedEvent[] }
-  | { type: "TOGGLE_POLICY"; id: string };
+  | { type: "TOGGLE_POLICY"; id: string }
+  | { type: "QUARANTINE_AGENT"; agentId: string }
+  | { type: "RESTORE_AGENT"; agentId: string };
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
 
@@ -77,6 +79,18 @@ function governanceReducer(state: GovernanceState, action: Action): GovernanceSt
       );
       return { ...state, policies };
     }
+    case "QUARANTINE_AGENT": {
+      const agents = state.agents.map((a) =>
+        a.id === action.agentId ? { ...a, status: "blocked" as const } : a
+      );
+      return { ...state, agents, stats: computeStats(state.events, agents) };
+    }
+    case "RESTORE_AGENT": {
+      const agents = state.agents.map((a) =>
+        a.id === action.agentId ? { ...a, status: "active" as const } : a
+      );
+      return { ...state, agents, stats: computeStats(state.events, agents) };
+    }
     default:
       return state;
   }
@@ -114,6 +128,9 @@ import React from "react";
 interface GovernanceContextValue {
   state: GovernanceState;
   togglePolicy: (id: string) => void;
+  quarantineAgent: (agentId: string) => void;
+  restoreAgent: (agentId: string) => void;
+  dispatch: React.Dispatch<Action>;
 }
 
 const GovernanceContext = createContext<GovernanceContextValue | null>(null);
@@ -145,7 +162,15 @@ export function GovernanceProvider({ children }: { children: React.ReactNode }) 
     dispatch({ type: "TOGGLE_POLICY", id });
   }, []);
 
-  return React.createElement(GovernanceContext.Provider, { value: { state, togglePolicy } }, children);
+  const quarantineAgent = useCallback((agentId: string) => {
+    dispatch({ type: "QUARANTINE_AGENT", agentId });
+  }, []);
+
+  const restoreAgent = useCallback((agentId: string) => {
+    dispatch({ type: "RESTORE_AGENT", agentId });
+  }, []);
+
+  return React.createElement(GovernanceContext.Provider, { value: { state, togglePolicy, quarantineAgent, restoreAgent, dispatch } }, children);
 }
 
 export function useGovernance(): GovernanceContextValue {
