@@ -1,0 +1,19 @@
+node_modules/
+.next/
+.env
+.env.local
+dist/
+*.log
+.lobstertrap/
+
+# Internal project management
+memory/
+CLAUDE.md
+dashboard/CLAUDE.md
+dashboard/AGENTS.md
+PROJECT.md
+
+# OS
+.DS_Store
+.DS_Store?
+
