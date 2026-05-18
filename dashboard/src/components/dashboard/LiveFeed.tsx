@@ -262,7 +262,7 @@ export function LiveFeed() {
               : "bg-orange-900/20 border-orange-800/40"
           }`}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-slate-400 font-semibold text-xs">Lobster Trap DPI Response</span>
+              <span className="text-slate-400 font-semibold text-xs">Agency Shield Scanner Response</span>
               <span className={`font-bold ${
                 lastResult.action === "ALLOW" ? "text-green-400"
                   : lastResult.action === "QUARANTINE" ? "text-red-400"

@@ -8,7 +8,7 @@ export interface LobsterTrapResult {
   flags: string[];
   action: string;
   scan_duration_ms: number;
-  proxy: string;
+  scanner: string;
   severity: string;
   reason: string;
 }

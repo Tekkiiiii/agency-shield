@@ -41,7 +41,7 @@
 
 [Click Export CSV in Audit Trail] → "Enterprise compliance. One click."
 
-"$847 saved in this 10-minute demo. Annualized across an enterprise deployment: $44M."
+"$847 saved in this demo. At enterprise scale — 500 agents, 24/7 — that's $4.4M annually in prevented runaway costs."
 
 ---
 

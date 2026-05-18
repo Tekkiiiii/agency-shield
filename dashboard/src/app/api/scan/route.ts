@@ -22,14 +22,14 @@ export async function POST(req: NextRequest) {
   const result = scanMessage(message);
   const scanDuration = Date.now() - start;
 
-  // Lobster Trap-style response format
+  // Agency Shield scanner response format (declared-vs-detected intent pattern)
   const lobsterResponse = {
     declared_intent: "inter-agent message",
     detected_intent: result.clean ? "benign" : "malicious",
     flags: result.flags,
     action: result.clean ? "ALLOW" : result.severity === "critical" ? "QUARANTINE" : "DENY",
     scan_duration_ms: scanDuration,
-    proxy: "lobstertrap-v0.1",
+    scanner: "agency-shield-scanner-v1.0",
     severity: result.severity,
     reason: result.reason ?? (result.clean ? "No threats detected." : `Detected: ${result.flags.join(", ")}`),
   };
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     {
       status: 200,
       headers: {
-        "X-LobsterTrap-Version": "v0.1",
+        "X-Scanner-Engine": "agency-shield-v1.0",
         "X-Agency-Shield": "orchestration-layer",
         "X-Scan-Duration": String(scanDuration),
       },

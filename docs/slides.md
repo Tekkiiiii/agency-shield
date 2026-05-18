@@ -195,7 +195,8 @@ These attacks happen at the **orchestration layer** — above the LLM, below the
 
 Real-time governance visibility across 30 agents in 10 departments.
 
-![Dashboard](screenshot.png)
+**Live at:** `https://dashboard-iota-swart-15.vercel.app`
+Open the URL now — the dashboard runs a live 30-agent simulation automatically.
 
 | Panel | What It Shows |
 |-------|--------------|
@@ -256,8 +257,11 @@ Both **Agency Shield** events (orchestration-layer) and **Lobster Trap DPI** eve
 
 **Operational visibility** — 30 agents across 10 departments, visible in one dashboard. Security and compliance teams see the same data in real time.
 
-> **$847 saved in 10-minute demo — annualized to $44M for enterprise.**
-> Governance infrastructure is the prerequisite, not the afterthought.
+> **$847 saved in 10-minute demo.** Based on 500-agent enterprise deployment at $0.03/1K tokens, 24/7 operation — circuit breakers prevent an estimated **$4.4M annually** in runaway compute costs.
+
+Audit Trail provides tamper-proof AI behavior logs — a requirement under EU AI Act Article 12 and SOC 2 Type II.
+
+Integrates with LangGraph, AutoGen, and CrewAI deployments — one SDK import, no infrastructure changes.
 
 ---
 

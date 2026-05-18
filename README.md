@@ -50,9 +50,11 @@ Agency Shield is a defense-in-depth governance platform that operates at two lay
 
 **Lobster Trap** (Veea's MIT-licensed DPI proxy) handles LLM-layer security. **Agency Shield** handles everything above it — the orchestration layer that DPI cannot see.
 
+Agency Shield implements the same detection patterns at the orchestration layer that Lobster Trap applies at the LLM layer. Together they create defense-in-depth: Lobster Trap catches LLM-layer attacks, Agency Shield catches orchestration-layer attacks that never reach the LLM.
+
 ## Live Demo
 
-**Dashboard**: [https://agency-shield-demo.vercel.app](https://agency-shield-demo.vercel.app)
+**Dashboard**: [https://dashboard-iota-swart-15.vercel.app](https://dashboard-iota-swart-15.vercel.app)
 
 ## Features
 

@@ -67,13 +67,6 @@ export function DashboardShell() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Lobster Trap badge */}
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-violet-500/10 border border-violet-500/30">
-              <Cpu className="h-3 w-3 text-violet-400" />
-              <span className="text-xs text-violet-300 font-medium">Powered by Lobster Trap</span>
-              <span className="text-xs text-violet-500">(Veea)</span>
-            </div>
-
             {/* Live indicator */}
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <Activity className="h-3.5 w-3.5 text-green-400 animate-pulse" />
@@ -151,8 +144,12 @@ export function DashboardShell() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 px-6 py-3 text-center text-xs text-slate-600">
-        Agency Shield · TechEx Intelligent Enterprise Solutions Hackathon 2026 · Track 1: Agent Security & AI Governance · Powered by Lobster Trap DPI (Veea)
+      <footer className="border-t border-slate-800 px-6 py-3 flex items-center justify-center gap-4 text-xs text-slate-600">
+        <span>Agency Shield · TechEx Intelligent Enterprise Solutions Hackathon 2026 · Track 1: Agent Security &amp; AI Governance</span>
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-violet-500/10 border border-violet-500/20">
+          <Cpu className="h-3 w-3 text-violet-500" />
+          <span className="text-violet-400">Powered by Lobster Trap (Veea)</span>
+        </div>
       </footer>
     </div>
   );
